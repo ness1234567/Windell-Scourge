@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Interactable
   layers:
   - Default
   - TransparentFX
@@ -46,4 +47,7 @@ TagManager:
     locked: 0
   - name: on_ground
     uniqueID: 4007716143
+    locked: 0
+  - name: UI
+    uniqueID: 3496466583
     locked: 0

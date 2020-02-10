@@ -1,0 +1,85 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.UI;
+using Cinemachine;
+
+
+public class SettingMenu : MonoBehaviour
+{
+
+    public Dropdown resolutionDropdown;
+    public Cinemachine.CinemachineVirtualCamera vcam;
+
+    public Slider zoomSlider;
+
+    Resolution[] availableResolutions;
+
+    void Awake()
+    {
+        //Find all available resolutions and set it to current one
+        availableResolutions = Screen.resolutions;
+
+        int currResIndex = 0;
+        int j = 0;
+
+        List <string> optionList = new List<string>();
+        foreach (Resolution i in availableResolutions)
+        {
+            string option = i.width + " x " + i.height;
+            /*if (optionList.IndexOf(option) != -1)
+            {
+                continue;
+            }*/
+
+            optionList.Add(option);
+
+            if(i.width == Screen.currentResolution.width &&
+               i.height == Screen.currentResolution.height)
+            {
+                currResIndex = j;
+            }
+            j++;
+        }
+
+        resolutionDropdown.AddOptions(optionList);
+        resolutionDropdown.value = currResIndex;
+        resolutionDropdown.RefreshShownValue();
+    }
+
+    public void setResolution(int resIndex)
+    {
+        Resolution res = availableResolutions[resIndex];
+        Screen.SetResolution(res.width, res.height, Screen.fullScreen);
+    }
+
+    public void setFullscreen(bool fullscreen)
+    {
+        Screen.fullScreen = fullscreen;
+    }
+
+    public void setVolume(float volume)
+    {
+        Debug.Log(volume);
+    }
+
+    public void setZoomSlide(float zoomLevel)
+    {
+        vcam.m_Lens.OrthographicSize = (1-zoomLevel)*30;
+    }
+
+    public void setZoomInput(string _zoomLevel)
+    {
+        try
+        {
+            float zoomLevel = float.Parse(_zoomLevel);
+            vcam.m_Lens.OrthographicSize = zoomLevel;
+            zoomSlider.value = zoomLevel;
+        } catch
+        {
+            return;
+        }
+        
+    }
+}
