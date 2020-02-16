@@ -17,7 +17,7 @@ public class click_observer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonUp(0))
+        /*if (Input.GetMouseButtonUp(0))
         {
             Ray mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D[] hit = Physics2D.RaycastAll(mouseRay.origin, mouseRay.direction, 100f);
@@ -36,7 +36,7 @@ public class click_observer : MonoBehaviour
                     }
                 }
             }
-        }
+        }*/
     }
 
     //TODO: check if in 1 tile range

@@ -13,6 +13,8 @@ public class ItemObject : ScriptableObject
     private string _description;
     [SerializeField]
     private Sprite _img;
+    [SerializeField]
+    private bool _stackable;
 
     //getters and setters
     public int item_id
@@ -38,4 +40,9 @@ public class ItemObject : ScriptableObject
         set { _img = value; }
     }
 
+    public bool stackable
+    {
+        get { return _stackable; }
+        set { _stackable = value; }
+    }
 }

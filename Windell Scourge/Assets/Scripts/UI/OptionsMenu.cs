@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using Cinemachine;
 
 
-public class SettingMenu : MonoBehaviour
+public class OptionsMenu : MonoBehaviour
 {
 
     public Dropdown resolutionDropdown;
@@ -19,30 +19,49 @@ public class SettingMenu : MonoBehaviour
     void Awake()
     {
         //Find all available resolutions and set it to current one
-        availableResolutions = Screen.resolutions;
+        List<Resolution> temp = new List<Resolution>();
 
         int currResIndex = 0;
         int j = 0;
 
         List <string> optionList = new List<string>();
-        foreach (Resolution i in availableResolutions)
+
+        foreach (Resolution i in Screen.resolutions)
         {
             string option = i.width + " x " + i.height;
-            /*if (optionList.IndexOf(option) != -1)
+
+            /*//Resolution must be 16:9
+            if ((i.width / 16) != (i.height / 9))
             {
                 continue;
             }*/
 
-            optionList.Add(option);
+            //Min resolution size is 960:540
+            if ((i.width < 960) || (i.height < 540))
+            {
+                continue;
+            }
 
-            if(i.width == Screen.currentResolution.width &&
+            //remove repeat resolutions
+            if (optionList.IndexOf(option) != -1)
+            {
+                continue;
+            }
+            
+            if (i.width == Screen.currentResolution.width &&
                i.height == Screen.currentResolution.height)
             {
                 currResIndex = j;
             }
+
             j++;
+            temp.Add(i);
+            Debug.Log(option);
+            optionList.Add(option);
+
         }
 
+        availableResolutions = temp.ToArray();
         resolutionDropdown.AddOptions(optionList);
         resolutionDropdown.value = currResIndex;
         resolutionDropdown.RefreshShownValue();
