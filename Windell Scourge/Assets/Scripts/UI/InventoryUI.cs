@@ -39,7 +39,6 @@ public class InventoryUI : MonoBehaviour
 
     public void RefreshInventoryUI()
     {
-        Debug.Log("Refreshing!");
         for (int i = 0; i < inventory.totalSlots; i++)
         {
             if (inventory.getItem(i) != null)

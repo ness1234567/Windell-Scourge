@@ -33,11 +33,15 @@ public class InventoryController : MonoBehaviour
     private void CursorEnterItem(SlotUI i)
     {
         i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+        ItemHighlighUI highlight = InvUI.GetComponentInChildren<ItemHighlighUI>();
+        highlight.activateHighlight(i.SlotID);
     }
 
     private void CursorExitItem(SlotUI i)
     {
         i.Image.rectTransform.localScale = new Vector3(1, 1, 1);
+        ItemHighlighUI highlight = InvUI.GetComponentInChildren<ItemHighlighUI>();
+        //highlight.deactivateHighlight(i.SlotID);
     }
 
     private void ItemClick(SlotUI i)
@@ -54,7 +58,6 @@ public class InventoryController : MonoBehaviour
         {
             InsertItem(i);
         }
-        InvUI.RefreshInventoryUI();
     }
 
     private void SwapItem(SlotUI i)
@@ -62,17 +65,24 @@ public class InventoryController : MonoBehaviour
         ItemObject temp = SelectedItemUI.DraggedItem;
         SelectedItemUI.DraggedItem = i.item;
         InvObject.addItem(i.SlotID, temp);
+        i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+        InvUI.RefreshInventoryUI();
     }
 
     private void SelectItem(SlotUI i)
     {
+        Debug.Log("Selecting item");
         SelectedItemUI.DraggedItem = i.item;
         InvObject.removeItem(i.SlotID);
+        InvUI.RefreshInventoryUI();
     }
 
     private void InsertItem(SlotUI i)
     {
+        Debug.Log("insert");
         InvObject.addItem(i.SlotID, SelectedItemUI.DraggedItem);
+        InvUI.RefreshInventoryUI();
+        i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
         SelectedItemUI.DraggedItem = null;
     }
 }

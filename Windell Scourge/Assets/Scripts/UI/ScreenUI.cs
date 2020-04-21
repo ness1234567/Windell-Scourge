@@ -82,7 +82,9 @@ public class ScreenUI : MonoBehaviour
     {
         pauseScreen.SetActive(true);
         HUDScreen.SetActive(false);
+        InventoryScreen.SetActive(false);
         //Time.timeScale = 0f;
+        InventoryScrenOpen = false;
         SettingsScreenOpen = true;
     }
 

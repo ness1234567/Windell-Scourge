@@ -83,7 +83,6 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         {
             OnPointerExitEvent(this);
         }
-
     }
 
     public void debug()
