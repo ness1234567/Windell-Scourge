@@ -13918,13 +13918,12 @@ SpriteRenderer:
   m_SortingLayerID: -287251153
   m_SortingLayer: 2
   m_SortingOrder: 1
-  m_Sprite: {fileID: 6003845326091150372, guid: 8ed6984b9364a564daa2473685e5cf27,
-    type: 3}
+  m_Sprite: {fileID: 818323235096636213, guid: 4d9ad6a5037e3404eb290b187c55795d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 3, y: 2}
+  m_Size: {x: 3, y: 4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -13938,7 +13937,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1917793989}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: -5, z: 0}
+  m_LocalPosition: {x: 1.5, y: -4.91, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1257540895}
@@ -14015,8 +14014,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.000000019068342, y: -0.15995686}
-  m_Size: {x: 1.0625001, y: 0.69008636}
+  m_Offset: {x: 0, y: 0.2}
+  m_Size: {x: 1.0625001, y: 0.65}
   m_Direction: 1
 --- !u!114 &1917793996
 MonoBehaviour:
