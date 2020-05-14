@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Handles the inventory logic and what to do with user input
 public class InventoryController : MonoBehaviour
 {
     [SerializeField]

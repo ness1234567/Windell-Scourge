@@ -69,6 +69,7 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         }
     }
 
+    //observable notify function handler. Notfies observers/subscribers that the mouse hovered over slot.
     public void OnPointerEnter(PointerEventData eventData)
     {
         if ((eventData != null) && (OnPointerEnterEvent != null)) 
@@ -77,6 +78,7 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         }
     }
 
+    //observable notify function handler. Notfies observers/subscribers that the mouse exited slot.
     public void OnPointerExit(PointerEventData eventData)
     {
         if ((eventData != null) && (OnPointerExitEvent != null))

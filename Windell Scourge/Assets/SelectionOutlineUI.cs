@@ -45,8 +45,16 @@ public class SelectionOutlineUI : MonoBehaviour
             currentSlotID = baseSlotID + 9;
 
         //poll for mouse scroll wheel input
+        float mWheel = Input.GetAxis("Mouse ScrollWheel");
+        if ((mWheel > 0) && (currentSlotID != 39))
+        {
+            currentSlotID = currentSlotID + 1;
+        }
+        else if ((mWheel < 0) && (currentSlotID != 30))
+        {
+            currentSlotID = currentSlotID - 1;
+        }
 
-        //Debug.Log(currentSlotID);
         //Update UI current tool outline position
         tf.localPosition = new Vector3(initX + (20 * (currentSlotID - 30)), initY);
 

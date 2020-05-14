@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
 
+//Displays the inventory to the player and handles input (via SlotUI)
 public class InventoryUI : MonoBehaviour
 {
-    //list of observers to notify on right click
+    //list of observers to notify on right-click/enter/exit any item in inventory
     public event Action<SlotUI> OnLeftClickItemEvent;
     public event Action<SlotUI> OnPointerEnterItemEvent;
     public event Action<SlotUI> OnPointerExitItemEvent;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+//Contains the inventory data structure and basic manipulations of the data structure
 public class InventoryObject : MonoBehaviour
 {
     private int _total_slots = 40;
