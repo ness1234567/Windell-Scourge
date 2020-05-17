@@ -26,21 +26,12 @@ public class ItemHighlighUI : MonoBehaviour
         highlight.color = new Color(0, 0, 0, 0);    
     }
 
-    public void activateHighlight(int slotID)
+    //places a dark highlight at X, Y with scale xScale, yScale
+    public void activateHighlight(float x, float y, float xScale, float yScale)
     {
-        //move highlight image to slot position
-        if ((slotID >= 0) && (slotID <= 29))
-        {
-            int row = (int)(slotID / 5);
-            int col = slotID % 5;
-            tf.localPosition = new Vector3(inv_initX + (col*20), inv_initY - (row*18));
-        }
-        else if ((slotID >= 30) && (slotID <= 39))
-        {
-            tf.localPosition = new Vector3(tool_initX + (20 * (slotID - 30)), tool_initY);
-        }
-
         //make highlight visible
+        tf.localScale = new Vector3(xScale, yScale, 1);
+        tf.localPosition = new Vector3(x, y, 0);
         highlight.color = new Color(0, 0, 0, 0.2f);
     }
 
@@ -48,6 +39,7 @@ public class ItemHighlighUI : MonoBehaviour
     {
         Debug.Log("deactivate");
         //make highlight invisible
+        tf.localScale = new Vector3(1, 1, 1);
         highlight.color = new Color(0, 0, 0, 0);
     }
 }

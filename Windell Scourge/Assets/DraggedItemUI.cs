@@ -17,10 +17,10 @@ public class DraggedItemUI : MonoBehaviour
     {
         im = GetComponent<Image>();
         im.color = disabledColor;
-        DraggedItem = null;
+        _draggedItem = null;
     }
 
-    public ItemObject DraggedItem
+    public ItemObject item
     {
         get { return _draggedItem; }
         set

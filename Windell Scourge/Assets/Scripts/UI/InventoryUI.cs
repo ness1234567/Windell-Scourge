@@ -11,6 +11,7 @@ public class InventoryUI : MonoBehaviour
     public event Action<SlotUI> OnLeftClickItemEvent;
     public event Action<SlotUI> OnPointerEnterItemEvent;
     public event Action<SlotUI> OnPointerExitItemEvent;
+    //public event EventHandler OnPointerExitItemEvent2;
 
     [SerializeField]
     InventoryObject inventory;
@@ -19,12 +20,13 @@ public class InventoryUI : MonoBehaviour
     [SerializeField]
     SlotUI[] itemSlots;
 
-    private void Awake()
+    private void Start()
     {
         itemSlots = InvSlotsObject.GetComponentsInChildren<SlotUI>();
+        //itemSlots[0].OnPointerExitEvent2 += OnPointerExitItemEvent2;
 
         //Each slot is an observable. Subscribe to each observerable to check for a right click event on a slot
-        for(int i = 0; i < inventory.totalSlots; i++)
+        for (int i = 0; i < inventory.totalSlots; i++)
         {
             itemSlots[i].SlotID = i;
             itemSlots[i].OnLeftClickEvent += OnLeftClickItemEvent;

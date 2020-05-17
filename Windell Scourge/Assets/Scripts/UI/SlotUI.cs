@@ -11,6 +11,7 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     public event Action<SlotUI> OnLeftClickEvent;
     public event Action<SlotUI> OnPointerEnterEvent;
     public event Action<SlotUI> OnPointerExitEvent;
+    //public event EventHandler OnPointerExitEvent2;
 
     private int _SlotID;
     [SerializeField]
@@ -58,11 +59,14 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         get { return _img; }
     }
 
+    private void Awake()
+    {
+        
+    }
 
     //observable notify function handler. Notfies observers/subscribers that slot was left clicked.
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("Clicking on Slot!");
         if ((eventData != null) && (eventData.button == PointerEventData.InputButton.Left) && (OnLeftClickEvent != null))
         {
             OnLeftClickEvent(this);
@@ -84,12 +88,12 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         if ((eventData != null) && (OnPointerExitEvent != null))
         {
             OnPointerExitEvent(this);
+            //OnPointerExitEvent2(this, EventArgs.Empty);
         }
     }
 
     public void debug()
     {
         Debug.Log(OnLeftClickEvent);
-
     }
 }

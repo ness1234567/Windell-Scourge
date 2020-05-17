@@ -10,6 +10,8 @@ public class InventoryObject : MonoBehaviour
     private int _occupied_slots = 0;
     private ItemObject[] _InventorySlots = new ItemObject[40];
 
+    private int _selectedItemID = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -56,6 +58,18 @@ public class InventoryObject : MonoBehaviour
         set { _occupied_slots = value; }
     }
 
+    public int selectedItemID
+    {
+        get { return _selectedItemID; }
+        set { _selectedItemID = value; }
+    }
+
+    public ItemObject getSelectedItem()
+    {
+        return _InventorySlots[_selectedItemID];
+    }
+
+
     public ItemObject getItem(int slotNum)
     {
         if (slotNum < _total_slots)
@@ -66,4 +80,5 @@ public class InventoryObject : MonoBehaviour
             return null;
         }
     }
+
 }
