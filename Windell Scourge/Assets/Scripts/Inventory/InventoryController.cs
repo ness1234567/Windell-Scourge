@@ -19,8 +19,6 @@ public class InventoryController : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("CALLED CONTROLLER AWAKE");
-
         //Initialise inventory with 1 hoe. REMOVE LATER! 
         InvObject.addItem(0, tempHoe);
 
@@ -105,7 +103,6 @@ public class InventoryController : MonoBehaviour
 
     private void SelectItem(SlotUI i)
     {
-        Debug.Log("Selecting item");
         draggedItemUI.item = i.item;
         InvObject.removeItem(i.SlotID);
         InvUI.RefreshInventoryUI();
@@ -113,7 +110,6 @@ public class InventoryController : MonoBehaviour
 
     private void InsertItem(SlotUI i)
     {
-        Debug.Log("insert");
         InvObject.addItem(i.SlotID, draggedItemUI.item);
         InvUI.RefreshInventoryUI();
         i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);

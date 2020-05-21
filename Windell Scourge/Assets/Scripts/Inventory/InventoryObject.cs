@@ -9,6 +9,7 @@ public class InventoryObject : MonoBehaviour
     private int _total_slots = 40;
     private int _occupied_slots = 0;
     private ItemObject[] _InventorySlots = new ItemObject[40];
+    private int[] _ItemQuantity = new int[40];
 
     private int _selectedItemID = 0;
 

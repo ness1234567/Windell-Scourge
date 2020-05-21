@@ -7,7 +7,7 @@ using System;
 
 public class HUDToolbarUI : MonoBehaviour
 {
-    public event Action<int> selectedItemChange;
+    public event Action<SlotUI> OnLeftClickItemEvent;
     public event Action<SlotUI> OnPointerEnterItemEvent;
     public event Action<SlotUI> OnPointerExitItemEvent;
 
@@ -19,10 +19,8 @@ public class HUDToolbarUI : MonoBehaviour
     Transform InvSlotsObject;
     [SerializeField]
     SlotUI[] itemSlots;
-    [SerializeField]
-    SelectionOutlineUI selectionOutline;
 
-    private void Awake()
+    private void Start()
     {
         itemSlots = InvSlotsObject.GetComponentsInChildren<SlotUI>();
 
@@ -30,16 +28,19 @@ public class HUDToolbarUI : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             itemSlots[i].SlotID = i+30;
-            itemSlots[i].OnLeftClickEvent += itemClick;
+            itemSlots[i].OnLeftClickEvent += OnLeftClickItemEvent;
             itemSlots[i].OnPointerEnterEvent += OnPointerEnterItemEvent;
             itemSlots[i].OnPointerExitEvent += OnPointerExitItemEvent;
         }
         RefreshToolbarUI();
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
-        RefreshToolbarUI();
+        if(itemSlots.Length != 0)
+        {
+            RefreshToolbarUI();
+        }
     }
 
     void Update()
@@ -49,15 +50,11 @@ public class HUDToolbarUI : MonoBehaviour
         //Poll for input
         PollKeyboardInput();
         PollMouseWheel();
-
         //update the current selected item in inventory
         if (prevSlotID != currentSlotID)
         {
-            selectedItemChange(currentSlotID);
+            OnLeftClickItemEvent(itemSlots[currentSlotID]);
         }
-
-        //Update UI current tool outline position
-        selectionOutline.updatePos(currentSlotID);
     }
 
 
@@ -65,10 +62,17 @@ public class HUDToolbarUI : MonoBehaviour
     {
         for (int i = 0; i < 10; i++)
         {
-            if (inventory.getItem(i+30) != null)
+            int index = i + 30;
+            if (inventory.getItem(index) != null)
             {
-                itemSlots[i].item = inventory.getItem(i+30);
-                itemSlots[i].Image.rectTransform.localScale = new Vector3(1, 1, 1);
+                itemSlots[i].item = inventory.getItem(index);
+                if (i != (inventory.selectedItemID - 30))
+                {
+                    itemSlots[i].Image.rectTransform.localScale = new Vector3(1, 1, 1);
+                } else
+                {
+                    itemSlots[i].Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+                }
             }
             else
             {
@@ -123,11 +127,5 @@ public class HUDToolbarUI : MonoBehaviour
                 currentSlotID = currentSlotID + 10;
             }
         }
-    }
-
-    void itemClick(SlotUI i)
-    {
-        currentSlotID = i.SlotID - 30;
-        selectedItemChange(currentSlotID);
     }
 }

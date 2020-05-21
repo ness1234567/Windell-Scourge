@@ -7,18 +7,18 @@ public class HUDToolbarController : MonoBehaviour
     [SerializeField]
     private InventoryObject InvObject;
     [SerializeField]
-    private DraggedItemUI draggedItemUI;
-    [SerializeField]
     private HUDToolbarUI ToolbarUI;
+    [SerializeField]
+    SelectionOutlineUI selectionOutline;
 
     void Awake()
     {
-        /*//Subscribe handlers for hovering over item
+        //Subscribe handlers for hovering over item
         ToolbarUI.OnPointerEnterItemEvent += CursorEnterItem;
         ToolbarUI.OnPointerExitItemEvent += CursorExitItem;
 
         //Subscribe handler for a change in selected item
-        ToolbarUI.selectedItemChange += ChangeSelectedItem;*/
+        ToolbarUI.OnLeftClickItemEvent += ItemClick;
     }
 
     // Update is called once per frame
@@ -28,51 +28,45 @@ public class HUDToolbarController : MonoBehaviour
 
     private void CursorEnterItem(SlotUI i)
     {
-        i.Image.rectTransform.localScale = new Vector3(1, 1, 1);
-        Vector3 pos = i.Image.rectTransform.position;
+        i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
         ItemHighlighUI highlight = this.GetComponentInChildren<ItemHighlighUI>();
-        Debug.Log("cursor enter test");
-        Debug.Log(pos);
-        Debug.Log(highlight);
-        //TODO
-        //Calculate highlight image slot position
-        /*float inv_initX = 9;
-        float inv_initY = 50;
 
-        int row = (int)(i.SlotID / 5);
-        int col = i.SlotID % 5;
-        float x = inv_initX + (col * 20);
-        float y = inv_initY - (row * 18);*/
+        if ((i.SlotID >= 30) && (i.SlotID <= 39))
+        {
+            float tool_initX = -90;
+            float tool_initY = -2;
 
-        highlight.activateHighlight(pos.x, pos.y, 1.25f, 1.25f);
+            float x = tool_initX + (20 * (i.SlotID - 30));
+
+            highlight.activateHighlight(x, tool_initY, 1, 1);
+        }
     }
 
     private void CursorExitItem(SlotUI i)
     {
-        i.Image.rectTransform.localScale = new Vector3(1, 1, 1);
+        if (i.SlotID == InvObject.selectedItemID)
+        {
+            i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+        }
+        else
+        {
+            i.Image.rectTransform.localScale = new Vector3(1, 1, 1);
+        }
         ItemHighlighUI highlight = this.GetComponentInChildren<ItemHighlighUI>();
         highlight.deactivateHighlight(i.SlotID);
     }
 
     private void ItemClick(SlotUI i)
     {
-        if ((i.item != null) && (draggedItemUI.item != null))
-        {
-            //SwapItem(i);
-        }
-        else if ((i.item != null) && (draggedItemUI.item == null))
-        {
-            //SelectItem(i);
-        }
-        else if ((i.item == null) && (draggedItemUI.item != null))
-        {
-            //InsertItem(i);
-        }
-    }
+        i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
 
-    private void ChangeSelectedItem(int slotID)
-    {
-        Debug.Log("Changing selected Item!");
-        InvObject.selectedItemID = slotID + 30;
+        //update mode
+        InvObject.selectedItemID = i.SlotID;
+
+        //Update UI current tool outline position
+        selectionOutline.updatePos(i.SlotID-30);
+
+        //refresh toolbar
+        ToolbarUI.RefreshToolbarUI();
     }
 }
