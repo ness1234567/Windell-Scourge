@@ -7,6 +7,7 @@ using System;
 //Handles the inventory logic and what to do with user input
 public class InventoryController : MonoBehaviour
 {
+    private static InventoryController _instance;
     [SerializeField]
     private InventoryUI InvUI;
     [SerializeField]
@@ -14,13 +15,16 @@ public class InventoryController : MonoBehaviour
     [SerializeField]
     private DraggedItemUI draggedItemUI;
 
-    //temp!! REMOVE LATER!
-    public ItemObject tempHoe;
-
     private void Awake()
     {
-        //Initialise inventory with 1 hoe. REMOVE LATER! 
-        InvObject.addItem(0, tempHoe);
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+        }
 
         //Subscribe handlers for clicking on item
         InvUI.OnLeftClickItemEvent += ItemClick;
@@ -34,10 +38,7 @@ public class InventoryController : MonoBehaviour
         InvUI.RefreshInventoryUI();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
+    public static InventoryController Instance { get { return _instance; } }
 
     private void CursorEnterItem(SlotUI i)
     {
@@ -94,7 +95,7 @@ public class InventoryController : MonoBehaviour
 
     private void SwapItem(SlotUI i)
     {
-        ItemObject temp = draggedItemUI.item;
+        ItemData temp = draggedItemUI.item;
         draggedItemUI.item = i.item;
         InvObject.addItem(i.SlotID, temp);
         i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
@@ -114,6 +115,18 @@ public class InventoryController : MonoBehaviour
         InvUI.RefreshInventoryUI();
         i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
         draggedItemUI.item = null;
+    }
+
+    public void PickUpItem(ItemData item)
+    {
+        //TODO
+        //Loop through toolbar and main inventory to find stack 
+
+        //Check if inventory is full
+
+        //loop through toolbar to find empty slot
+
+        //loop through main inventory to find empty slot
     }
 
     /*public void test(object i, EventArgs e)

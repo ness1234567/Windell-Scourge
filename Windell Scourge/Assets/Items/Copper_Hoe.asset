@@ -18,3 +18,4 @@ MonoBehaviour:
     about to break. You would probably get better value by minting coins out of the
     copper head than actually using it.
   _img: {fileID: 21300000, guid: 2069a63f00456dc4e8a15d98fe645c58, type: 3}
+  _stackable: 0

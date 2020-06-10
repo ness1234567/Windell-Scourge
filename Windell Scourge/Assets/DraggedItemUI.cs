@@ -7,7 +7,7 @@ public class DraggedItemUI : MonoBehaviour
 {
     [SerializeField]
     private Image im;
-    private ItemObject _draggedItem;
+    private ItemData _draggedItem;
 
     private Color normalColor = Color.white;
     private Color disabledColor = new Color(0, 0, 0, 0);
@@ -20,7 +20,7 @@ public class DraggedItemUI : MonoBehaviour
         _draggedItem = null;
     }
 
-    public ItemObject item
+    public ItemData item
     {
         get { return _draggedItem; }
         set

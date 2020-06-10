@@ -86,6 +86,7 @@ public class OptionsMenu : MonoBehaviour
     public void setZoomSlide(float zoomLevel)
     {
         vcam.m_Lens.OrthographicSize = (1-zoomLevel)*30;
+        Debug.Log((1 - zoomLevel) * 30);
     }
 
     public void setZoomInput(string _zoomLevel)
