@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PickItem : MonoBehaviour
+public class Pickable : MonoBehaviour
 {
     Collider2D c;
 
@@ -14,13 +14,26 @@ public class PickItem : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
+        if(col.gameObject.tag != "Player")
+        {
+            return;
+        }
+
         Debug.Log("OnCollisionEnter2D");
         InventoryController invControl = InventoryController.Instance;
 
-        ItemData item = col.gameObject.GetComponent<DroppedItem>().Item;
+        DroppedItem i = this.GetComponent<DroppedItem>();
+        Debug.Log(invControl);
 
-        invControl.PickUpItem(item);
-
+        int numleft = invControl.AutoStackItem(i.Item, i.Qauntity);
+        if (numleft == 0)
+        {
+            //Destroy the collided object
+            Destroy(this.gameObject);
+        } else
+        {
+            i.Qauntity = numleft;
+        }
     }
 
 

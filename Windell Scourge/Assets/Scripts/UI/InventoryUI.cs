@@ -46,13 +46,15 @@ public class InventoryUI : MonoBehaviour
         {
             if (inventory.getItem(i) != null)
             { 
-                itemSlots[i].item = inventory.getItem(i);
+                itemSlots[i].item = inventory.getItem(i).itemData;
                 itemSlots[i].Image.rectTransform.localScale = new Vector3(1,1,1);
             } else
             {
                 itemSlots[i].item = null;
             }
         }
+        ItemHighlighUI highlight = GetComponentInChildren<ItemHighlighUI>();
+        highlight.deactivateHighlight();
 
     }
 }

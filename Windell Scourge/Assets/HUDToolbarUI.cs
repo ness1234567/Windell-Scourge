@@ -65,7 +65,7 @@ public class HUDToolbarUI : MonoBehaviour
             int index = i + 30;
             if (inventory.getItem(index) != null)
             {
-                itemSlots[i].item = inventory.getItem(index);
+                itemSlots[i].item = inventory.getItem(index).itemData;
                 if (i != (inventory.selectedItemID - 30))
                 {
                     itemSlots[i].Image.rectTransform.localScale = new Vector3(1, 1, 1);
@@ -79,6 +79,8 @@ public class HUDToolbarUI : MonoBehaviour
                 itemSlots[i].item = null;
             }
         }
+        ItemHighlighUI highlight = GetComponentInChildren<ItemHighlighUI>();
+        highlight.deactivateHighlight();
 
     }
 

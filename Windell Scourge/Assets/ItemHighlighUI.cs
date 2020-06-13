@@ -35,11 +35,14 @@ public class ItemHighlighUI : MonoBehaviour
         highlight.color = new Color(0, 0, 0, 0.2f);
     }
 
-    public void deactivateHighlight(int slotID)
+    public void deactivateHighlight()
     {
         Debug.Log("deactivate");
         //make highlight invisible
-        tf.localScale = new Vector3(1, 1, 1);
-        highlight.color = new Color(0, 0, 0, 0);
+        if (tf != null)
+        {
+            tf.localScale = new Vector3(1, 1, 1);
+            highlight.color = new Color(0, 0, 0, 0);
+        }
     }
 }

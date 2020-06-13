@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemDatabase : MonoBehaviour
+[CreateAssetMenu(fileName = "ItemDatabase", menuName = "ItemDatabase")]
+public class ItemDatabase : ScriptableObject
 {
-    public static List<GameObject> items;
-    
+    public List<ItemData> items;
+    /*
     void Awake()
     {
         BuildDatabase();
@@ -14,8 +15,8 @@ public class ItemDatabase : MonoBehaviour
 
     void BuildDatabase()
     {
-        items = new List<GameObject>();
-
-    }
+        items = new List<ItemData>();
+        //TODO
+    }*/
     
 }

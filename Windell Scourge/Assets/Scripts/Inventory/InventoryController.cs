@@ -11,9 +11,15 @@ public class InventoryController : MonoBehaviour
     [SerializeField]
     private InventoryUI InvUI;
     [SerializeField]
+    private ItemHighlighUI highlight;
+    [SerializeField]
     private InventoryObject InvObject;
     [SerializeField]
     private DraggedItemUI draggedItemUI;
+    [SerializeField]
+    private HUDToolbarUI ToolbarUI;
+    [SerializeField]
+    SelectionOutlineUI selectionOutline;
 
     private void Awake()
     {
@@ -27,24 +33,28 @@ public class InventoryController : MonoBehaviour
         }
 
         //Subscribe handlers for clicking on item
-        InvUI.OnLeftClickItemEvent += ItemClick;
+        InvUI.OnLeftClickItemEvent += main_ItemClick;
 
         //Subscribe handlers for hovering over item
-        InvUI.OnPointerEnterItemEvent += CursorEnterItem;
-        InvUI.OnPointerExitItemEvent += CursorExitItem;
+        InvUI.OnPointerEnterItemEvent += main_CursorEnterItem;
+        InvUI.OnPointerExitItemEvent += main_CursorExitItem;
 
-        //InvUI.OnPointerExitItemEvent2 += test;
+        //Subscribe handlers for hovering over item
+        ToolbarUI.OnPointerEnterItemEvent += toolbar_CursorEnterItem;
+        ToolbarUI.OnPointerExitItemEvent += toolbar_CursorExitItem;
+
+        //Subscribe handler for a change in selected item
+        ToolbarUI.OnLeftClickItemEvent += toolbar_ItemClick;
 
         InvUI.RefreshInventoryUI();
     }
 
     public static InventoryController Instance { get { return _instance; } }
 
-    private void CursorEnterItem(SlotUI i)
+    private void main_CursorEnterItem(SlotUI i)
     {
         i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
-        ItemHighlighUI highlight = this.GetComponentInChildren<ItemHighlighUI>();
-
+        highlight = InvUI.GetComponentInChildren<ItemHighlighUI>();
         //move highlight image to slot position
         if ((i.SlotID >= 0) && (i.SlotID <= 29))
         {
@@ -70,24 +80,33 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    private void CursorExitItem(SlotUI i)
+    private void main_CursorExitItem(SlotUI i)
     {
         i.Image.rectTransform.localScale = new Vector3(1, 1, 1);
-        ItemHighlighUI highlight = InvUI.GetComponentInChildren<ItemHighlighUI>();
-        highlight.deactivateHighlight(i.SlotID);
+        highlight = InvUI.GetComponentInChildren<ItemHighlighUI>();
+        highlight.deactivateHighlight();
     }
 
-    private void ItemClick(SlotUI i)
+    private void main_ItemClick(SlotUI i)
     {
-        if ((i.item != null) && (draggedItemUI.item != null))
+        if ((InvObject.getItem(i.SlotID) != null) && (draggedItemUI.item != null))
         {
-            SwapItem(i);
+            //If same item, stack them
+            if(InvObject.getItem(i.SlotID).itemData.item_id == draggedItemUI.item.itemData.item_id)
+            {
+                StackItem(i);
+            }
+            //If not same item, then swap positions
+            else
+            {
+                SwapItem(i);
+            }
         }
-        else if ((i.item != null) && (draggedItemUI.item == null))
+        else if ((InvObject.getItem(i.SlotID) != null) && (draggedItemUI.item == null))
         {
             SelectItem(i);
         }
-        else if ((i.item == null) && (draggedItemUI.item != null))
+        else if ((InvObject.getItem(i.SlotID) == null) && (draggedItemUI.item != null))
         {
             InsertItem(i);
         }
@@ -95,16 +114,35 @@ public class InventoryController : MonoBehaviour
 
     private void SwapItem(SlotUI i)
     {
-        ItemData temp = draggedItemUI.item;
-        draggedItemUI.item = i.item;
+        ItemStack temp = draggedItemUI.item;
+        draggedItemUI.item = InvObject.getItem(i.SlotID);
         InvObject.addItem(i.SlotID, temp);
         i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
         InvUI.RefreshInventoryUI();
     }
 
+    private void StackItem(SlotUI i)
+    {
+        int maxStackNum = draggedItemUI.item.itemData.maxStacks;
+        int numA = InvObject.getItem(i.SlotID).quantity;
+        int numB = draggedItemUI.item.quantity;
+        int total = numA + numB;
+        if (total > maxStackNum)
+        {
+            int diff = total - maxStackNum;
+            draggedItemUI.item.quantity = diff;
+            InvObject.getItem(i.SlotID).quantity = maxStackNum;
+        } else
+        {
+            InvObject.getItem(i.SlotID).quantity = total;
+            Destroy(draggedItemUI.item);
+            draggedItemUI.item = null;
+        }
+    }
+
     private void SelectItem(SlotUI i)
     {
-        draggedItemUI.item = i.item;
+        draggedItemUI.item = InvObject.getItem(i.SlotID);
         InvObject.removeItem(i.SlotID);
         InvUI.RefreshInventoryUI();
     }
@@ -117,21 +155,144 @@ public class InventoryController : MonoBehaviour
         draggedItemUI.item = null;
     }
 
-    public void PickUpItem(ItemData item)
+    //////////////////////////////////////////////////////////////////
+
+    private void toolbar_CursorEnterItem(SlotUI i)
     {
-        //TODO
-        //Loop through toolbar and main inventory to find stack 
+        i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
 
-        //Check if inventory is full
+        if ((i.SlotID >= 30) && (i.SlotID <= 39))
+        {
+            float tool_initX = -90;
+            float tool_initY = -2;
 
-        //loop through toolbar to find empty slot
-
-        //loop through main inventory to find empty slot
+            float x = tool_initX + (20 * (i.SlotID - 30));
+            highlight = ToolbarUI.GetComponentInChildren<ItemHighlighUI>();
+            highlight.activateHighlight(x, tool_initY, 1, 1);
+        }
     }
 
-    /*public void test(object i, EventArgs e)
+    private void toolbar_CursorExitItem(SlotUI i)
     {
-        Debug.Log("TEST 3");
-        Debug.Log(i);
-    }*/
+        if (i.SlotID == InvObject.selectedItemID)
+        {
+            i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+        }
+        else
+        {
+            i.Image.rectTransform.localScale = new Vector3(1, 1, 1);
+        }
+        highlight = ToolbarUI.GetComponentInChildren<ItemHighlighUI>();
+        highlight.deactivateHighlight();
+    }
+
+    private void toolbar_ItemClick(SlotUI i)
+    {
+        i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+
+        //update mode
+        InvObject.selectedItemID = i.SlotID;
+
+        //Update UI current tool outline position
+        selectionOutline.updatePos(i.SlotID - 30);
+
+        //refresh toolbar
+        ToolbarUI.RefreshToolbarUI();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public int AutoStackItem(ItemData item, int num)
+    {
+        //TODO
+        int numLeft = num;
+        int maxStackNum = item.maxStacks;
+
+        //Loop through toolbar and main inventory to find stack 
+        if (item.stackable == true)
+        {
+            for (int i = 30; i < 40; i++)
+            {
+                if ((InvObject.getItem(i).itemData.item_id == item.item_id) && (InvObject.getItem(i).quantity != maxStackNum))
+                {
+                    int total = InvObject.getItem(i).quantity + numLeft;
+                    if (total > maxStackNum)
+                    {
+                        numLeft = total - maxStackNum;
+                        InvObject.getItem(i).quantity = maxStackNum;
+                    }
+                    else
+                    {
+                        numLeft = 0;
+                        break;
+                    }
+                }
+            }
+
+            for (int i = 0; i < 30; i++)
+            {
+                if (numLeft == 0)
+                    break;
+
+                if ((InvObject.getItem(i).itemData.item_id == item.item_id) && (InvObject.getItem(i).quantity != maxStackNum))
+                {
+                    int total = InvObject.getItem(i).quantity + numLeft;
+                    if (total > maxStackNum)
+                    {
+                        numLeft = total - maxStackNum;
+                        InvObject.getItem(i).quantity = maxStackNum;
+                    }
+                    else
+                    {
+                        numLeft = 0;
+                        break;
+                    }
+                }
+            }
+        }
+
+        //Check if inventory is full
+        if (InvObject.occupiedSlots == InvObject.totalSlots)
+        {
+            return numLeft;
+        }
+
+        //TODO
+        GameObject obj = new GameObject("empty");
+        ItemStack stack = obj.AddComponent<ItemStack>();
+        stack.itemData = item;
+        stack.quantity = numLeft;
+
+        //loop through toolbar to find empty slot
+        for (int i = 30; i < 40; i++)
+        {
+            if (numLeft == 0)
+                break;
+
+            if (InvObject.getItem(i) == null)
+            {
+                InvObject.addItem(i, stack);
+                numLeft = 0;
+            }
+        }
+
+        //loop through main inventory to find empty slot
+        for (int i = 0; i < 30; i++)
+        {
+            if (numLeft == 0)
+                break;
+
+            if (InvObject.getItem(i) == null)
+            {
+                InvObject.addItem(i, stack);
+                numLeft = 0;
+            }
+        }
+
+        InvUI.RefreshInventoryUI();
+        ToolbarUI.RefreshToolbarUI();
+
+        return numLeft;
+    }
+
 }

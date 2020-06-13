@@ -2,7 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Item", menuName = "Item")]
+public enum itemType
+{
+    Hoe = 0,
+    Pickaxe = 1,
+    watering_can = 2,
+    food = 3
+}
+
+[CreateAssetMenu(fileName = "Item", menuName = "Item/Generic")]
 public class ItemData : ScriptableObject
 {
     [SerializeField]
@@ -15,8 +23,19 @@ public class ItemData : ScriptableObject
     private Sprite _img;
     [SerializeField]
     private bool _stackable;
+    [SerializeField]
+    private int _maxStacks;
+    [SerializeField]
+    private itemType _type;
+
 
     //getters and setters
+    public itemType type
+    {
+        get { return _type; }
+        set { _type = value; }
+    }
+
     public int item_id
     {
         get { return _item_id; }
@@ -46,8 +65,9 @@ public class ItemData : ScriptableObject
         set { _stackable = value; }
     }
 
-    public virtual void use()
+    public int maxStacks
     {
-
+        get { return _maxStacks; }
+        set { _maxStacks = value; }
     }
 }
