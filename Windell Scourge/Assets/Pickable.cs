@@ -29,7 +29,7 @@ public class Pickable : MonoBehaviour
         if (numleft == 0)
         {
             //Destroy the collided object
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         } else
         {
             i.Qauntity = numleft;

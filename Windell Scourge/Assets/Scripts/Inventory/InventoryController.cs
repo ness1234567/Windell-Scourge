@@ -20,6 +20,8 @@ public class InventoryController : MonoBehaviour
     private HUDToolbarUI ToolbarUI;
     [SerializeField]
     SelectionOutlineUI selectionOutline;
+    [SerializeField]
+    public GameObject DroppedItemPrefab;
 
     private void Awake()
     {
@@ -39,6 +41,9 @@ public class InventoryController : MonoBehaviour
         InvUI.OnPointerEnterItemEvent += main_CursorEnterItem;
         InvUI.OnPointerExitItemEvent += main_CursorExitItem;
 
+        //Subscribe handler for clicking outside Inventory
+        InvUI.OnPointerClickOutside += DropItem;
+
         //Subscribe handlers for hovering over item
         ToolbarUI.OnPointerEnterItemEvent += toolbar_CursorEnterItem;
         ToolbarUI.OnPointerExitItemEvent += toolbar_CursorExitItem;
@@ -53,7 +58,7 @@ public class InventoryController : MonoBehaviour
 
     private void main_CursorEnterItem(SlotUI i)
     {
-        i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+        i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
         highlight = InvUI.GetComponentInChildren<ItemHighlighUI>();
         //move highlight image to slot position
         if ((i.SlotID >= 0) && (i.SlotID <= 29))
@@ -117,7 +122,7 @@ public class InventoryController : MonoBehaviour
         ItemStack temp = draggedItemUI.item;
         draggedItemUI.item = InvObject.getItem(i.SlotID);
         InvObject.addItem(i.SlotID, temp);
-        i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+        i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
         InvUI.RefreshInventoryUI();
     }
 
@@ -151,15 +156,34 @@ public class InventoryController : MonoBehaviour
     {
         InvObject.addItem(i.SlotID, draggedItemUI.item);
         InvUI.RefreshInventoryUI();
-        i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+        i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
         draggedItemUI.item = null;
+    }
+
+    private void DropItem()
+    {
+        if (draggedItemUI.item != null)
+        {
+            //Create new droppedItem prefab
+            Transform playerTransform = playerController.Instance.transform;
+            Vector3 spawnLocation = new Vector3(playerTransform.localPosition.x, playerTransform.localPosition.y - 1, playerTransform.localPosition.z);
+            GameObject obj = Instantiate(DroppedItemPrefab, spawnLocation, Quaternion.identity);
+
+            //initialise values of new object
+            DroppedItem droppedItem = obj.GetComponent<DroppedItem>();
+            droppedItem.Item = draggedItemUI.item.itemData;
+            droppedItem.Qauntity = draggedItemUI.item.quantity;
+
+            //Remove item from inventory/dragdropUI
+            draggedItemUI.item = null;
+        }
     }
 
     //////////////////////////////////////////////////////////////////
 
     private void toolbar_CursorEnterItem(SlotUI i)
     {
-        i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+        i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
 
         if ((i.SlotID >= 30) && (i.SlotID <= 39))
         {
@@ -176,7 +200,7 @@ public class InventoryController : MonoBehaviour
     {
         if (i.SlotID == InvObject.selectedItemID)
         {
-            i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+            i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
         }
         else
         {
@@ -188,7 +212,7 @@ public class InventoryController : MonoBehaviour
 
     private void toolbar_ItemClick(SlotUI i)
     {
-        i.Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+        i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
 
         //update mode
         InvObject.selectedItemID = i.SlotID;
@@ -258,10 +282,12 @@ public class InventoryController : MonoBehaviour
         }
 
         //TODO
-        GameObject obj = new GameObject("empty");
+        GameObject obj = new GameObject("InventoryItem");
         ItemStack stack = obj.AddComponent<ItemStack>();
         stack.itemData = item;
         stack.quantity = numLeft;
+
+        obj.transform.parent = InvObject.transform;
 
         //loop through toolbar to find empty slot
         for (int i = 30; i < 40; i++)

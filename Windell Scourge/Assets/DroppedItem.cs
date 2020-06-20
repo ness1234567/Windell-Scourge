@@ -6,8 +6,6 @@ public class DroppedItem : MonoBehaviour
 {
     public ItemData _Item;
     int _Qauntity;
-    float x;
-    float y;
 
     // Start is called before the first frame update
     void Start()

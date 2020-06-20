@@ -71,7 +71,7 @@ public class HUDToolbarUI : MonoBehaviour
                     itemSlots[i].Image.rectTransform.localScale = new Vector3(1, 1, 1);
                 } else
                 {
-                    itemSlots[i].Image.rectTransform.localScale = new Vector3(1.125f, 1.125f, 1);
+                    itemSlots[i].Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
                 }
             }
             else

@@ -37,7 +37,6 @@ public class ItemHighlighUI : MonoBehaviour
 
     public void deactivateHighlight()
     {
-        Debug.Log("deactivate");
         //make highlight invisible
         if (tf != null)
         {

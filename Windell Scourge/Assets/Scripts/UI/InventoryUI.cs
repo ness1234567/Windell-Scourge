@@ -11,6 +11,7 @@ public class InventoryUI : MonoBehaviour
     public event Action<SlotUI> OnLeftClickItemEvent;
     public event Action<SlotUI> OnPointerEnterItemEvent;
     public event Action<SlotUI> OnPointerExitItemEvent;
+    public event Action OnPointerClickOutside;
     //public event EventHandler OnPointerExitItemEvent2;
 
     [SerializeField]
@@ -19,10 +20,12 @@ public class InventoryUI : MonoBehaviour
     Transform InvSlotsObject;
     [SerializeField]
     SlotUI[] itemSlots;
+    RectTransform rt;
 
     private void Start()
     {
         itemSlots = InvSlotsObject.GetComponentsInChildren<SlotUI>();
+        rt = gameObject.GetComponent<RectTransform>();
         //itemSlots[0].OnPointerExitEvent2 += OnPointerExitItemEvent2;
 
         //Each slot is an observable. Subscribe to each observerable to check for a right click event on a slot
@@ -31,8 +34,14 @@ public class InventoryUI : MonoBehaviour
             itemSlots[i].SlotID = i;
             itemSlots[i].OnLeftClickEvent += OnLeftClickItemEvent;
             itemSlots[i].OnPointerEnterEvent += OnPointerEnterItemEvent;
+            //TODO
             itemSlots[i].OnPointerExitEvent += OnPointerExitItemEvent;
         }
+    }
+
+    private void Update()
+    {
+        detectClickOutside();
     }
 
     private void OnEnable()
@@ -56,5 +65,17 @@ public class InventoryUI : MonoBehaviour
         ItemHighlighUI highlight = GetComponentInChildren<ItemHighlighUI>();
         highlight.deactivateHighlight();
 
+    }
+
+    private void detectClickOutside()
+    {
+        if (Input.GetMouseButtonDown(0) && gameObject.activeSelf &&
+            !RectTransformUtility.RectangleContainsScreenPoint(
+                rt,
+                Input.mousePosition,
+                Camera.main))
+        {
+            OnPointerClickOutside();
+        }
     }
 }

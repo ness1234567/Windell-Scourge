@@ -11,7 +11,7 @@ public class InventoryObject : MonoBehaviour
     private int _occupied_slots = 0;
     private ItemStack[] _InventorySlots = new ItemStack[40];
 
-    private int _selectedItemID = 0;
+    private int _selectedItemID = 30;
 
     void Awake()
     {
