@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemStack : MonoBehaviour
+public class ItemStack
 {
-    ItemData _itemData;
+    Item _item;
     int _quantity;
 
-    public ItemData itemData
+    public Item Item
     {
-        get { return _itemData; }
-        set { _itemData = value; }
+        get { return _item; }
+        set { _item = value; }
     }
 
     public int quantity
@@ -18,6 +18,4 @@ public class ItemStack : MonoBehaviour
         get { return _quantity; }
         set { _quantity = value; }
     }
-
-    public virtual void use() { }
 }

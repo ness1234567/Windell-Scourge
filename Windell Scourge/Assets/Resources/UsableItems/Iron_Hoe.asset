@@ -9,15 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93fbc3f7128574e4eb85b77b0831bd93, type: 3}
-  m_Name: Food
+  m_Script: {fileID: 11500000, guid: 447bc62d9302beb468c3bf0edd872df9, type: 3}
+  m_Name: Iron_Hoe
   m_EditorClassIdentifier: 
-  _item_id: 0
-  _item_name: 
-  _description: 
+  _item_id: 1
+  _item_name: Iron Hoe
+  _description: Your average farmer's hoe. Sturdy and reliable but nothing too impressive.
   _img: {fileID: 0}
   _stackable: 0
-  _maxStacks: 0
-  _type: 0
-  healthRestored: 0
-  spawnedObject: {fileID: 0}
+  _maxStacks: 1
+  _consumable: 0
+  _ToolTier: 1

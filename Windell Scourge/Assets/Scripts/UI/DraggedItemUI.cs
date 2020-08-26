@@ -7,7 +7,7 @@ public class DraggedItemUI : MonoBehaviour
 {
     [SerializeField]
     private Image im;
-    private ItemStack _draggedItem;
+    private ItemStack _draggedItemStack;
 
     private Color normalColor = Color.white;
     private Color disabledColor = new Color(0, 0, 0, 0);
@@ -17,20 +17,21 @@ public class DraggedItemUI : MonoBehaviour
     {
         im = GetComponent<Image>();
         im.color = disabledColor;
-        _draggedItem = null;
+        _draggedItemStack = null;
     }
 
-    public ItemStack item
+    public ItemStack itemStack
     {
-        get { return _draggedItem; }
+        get { return _draggedItemStack; }
         set
         {
-            _draggedItem = value;
-            if (_draggedItem != null)
+            _draggedItemStack = value;
+            if (_draggedItemStack != null)
             {
-                im.sprite = _draggedItem.itemData.img;
+                im.sprite = _draggedItemStack.Item.img;
                 im.color = normalColor;
-            } else
+            }
+            else
             {
                 im.sprite = null;
                 im.color = disabledColor;
@@ -38,5 +39,9 @@ public class DraggedItemUI : MonoBehaviour
         }
     }
 
-
+    public Item Item
+    {
+        get { return _draggedItemStack.Item; }
+        set { }
+    }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DroppedItem : MonoBehaviour
 {
-    public ItemData _Item;
+    public Item _Item;
     int _Qauntity;
 
     // Start is called before the first frame update
@@ -21,7 +21,8 @@ public class DroppedItem : MonoBehaviour
         
     }
 
-    public ItemData Item {
+    public Item Item
+    {
         get { return _Item; }
         set { _Item = value; }
     }

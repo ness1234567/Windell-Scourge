@@ -5,8 +5,8 @@ using System.Linq;
 
 public class ItemDatabaseObject : MonoBehaviour
 {
-    public ItemDatabase itemsDatabase;
-
+    [SerializeField]
+    private ItemDatabase itemsDatabase;
     private static ItemDatabaseObject _instance;
 
     // Start is called before the first frame update
@@ -24,13 +24,19 @@ public class ItemDatabaseObject : MonoBehaviour
 
     public static ItemDatabaseObject Instance { get { return _instance; } }
 
-    public ItemData getItembyID(int id)
+    public Item getItembyID(int id)
     {
-        return Instance.itemsDatabase.items.FirstOrDefault(i => i.item_id == id);
+        return itemsDatabase.ItemList[id];
     }
 
-    public ItemData getRandomItem()
+    public Item getItembyName(string name)
     {
-        return Instance.itemsDatabase.items[Random.Range(0, Instance.itemsDatabase.items.Count())];
+        return itemsDatabase.ItemList.FirstOrDefault(i => string.Equals(i.item_name, name));
     }
+
+    public Item getRandomItem()
+    {
+        return itemsDatabase.ItemList[Random.Range(0, itemsDatabase.ItemList.Count())];
+    }
+
 }

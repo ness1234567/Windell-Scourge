@@ -9,13 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c017aee3abbf2584c9a1ca1dbc29ca2c, type: 3}
+  m_Script: {fileID: 11500000, guid: 447bc62d9302beb468c3bf0edd872df9, type: 3}
   m_Name: Copper_Hoe
   m_EditorClassIdentifier: 
   _item_id: 0
-  _item_name: Copper_Hoe
-  _description: A rusty copper hoe that has seen better days. It looks like it is
-    about to break. You would probably get better value by minting coins out of the
-    copper head than actually using it.
+  _item_name: Copper Hoe
+  _description: This hoe has seen better days.
   _img: {fileID: 21300000, guid: 2069a63f00456dc4e8a15d98fe645c58, type: 3}
   _stackable: 0
+  _maxStacks: 1
+  _consumable: 0
+  _ToolTier: 0

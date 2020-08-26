@@ -1,17 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum itemType
+
+/*public enum itemType
 {
     Hoe = 0,
     Pickaxe = 1,
     watering_can = 2,
     food = 3
-}
+}*/
 
 [CreateAssetMenu(fileName = "Item", menuName = "Item/Generic")]
-public class ItemData : ScriptableObject
+public class Item : ScriptableObject, IComparable<Item>
 {
     [SerializeField]
     private int _item_id;
@@ -26,14 +28,23 @@ public class ItemData : ScriptableObject
     [SerializeField]
     private int _maxStacks;
     [SerializeField]
-    private itemType _type;
-
+    private bool _consumable;
 
     //getters and setters
-    public itemType type
+    /*public itemType type
     {
         get { return _type; }
         set { _type = value; }
+    }*/
+    public int CompareTo(Item item)
+    {   
+        // A null value means that this object is greater.
+        if (item == null){
+            return 1;  
+        }
+        else {
+            return this._item_id.CompareTo(item._item_id);
+        }
     }
 
     public int item_id
@@ -70,4 +81,13 @@ public class ItemData : ScriptableObject
         get { return _maxStacks; }
         set { _maxStacks = value; }
     }
+
+    public bool consumable
+    {
+        get { return _consumable; }
+        set { _consumable = value; }
+    }
+
+    public virtual void use() { }
+
 }

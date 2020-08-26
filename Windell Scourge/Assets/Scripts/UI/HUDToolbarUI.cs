@@ -13,7 +13,6 @@ public class HUDToolbarUI : MonoBehaviour
 
     int currentSlotID = 0;
 
-    [SerializeField]
     InventoryObject inventory;
     [SerializeField]
     Transform InvSlotsObject;
@@ -22,6 +21,7 @@ public class HUDToolbarUI : MonoBehaviour
 
     private void Start()
     {
+        inventory = InventoryController.Instance.Inventory;
         itemSlots = InvSlotsObject.GetComponentsInChildren<SlotUI>();
 
         //Each slot is an observable. Subscribe to each observerable to check for a right click event on a slot
@@ -65,7 +65,7 @@ public class HUDToolbarUI : MonoBehaviour
             int index = i + 30;
             if (inventory.getItem(index) != null)
             {
-                itemSlots[i].item = inventory.getItem(index).itemData;
+                itemSlots[i].item = inventory.getItem(index);
                 if (i != (inventory.selectedItemID - 30))
                 {
                     itemSlots[i].Image.rectTransform.localScale = new Vector3(1, 1, 1);

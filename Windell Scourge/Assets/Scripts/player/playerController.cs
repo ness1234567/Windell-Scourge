@@ -9,6 +9,8 @@ public class playerController : MonoBehaviour
     private Rigidbody2D rb;
     [SerializeField]
     private Animator a;
+    private bool interruptMovement = false;
+
     [SerializeField]
     private float runSpeed = 7f;
     [SerializeField]
@@ -44,37 +46,16 @@ public class playerController : MonoBehaviour
         {
             return;
         }
-        direction.x = Input.GetAxisRaw("Horizontal");
-        direction.y = Input.GetAxisRaw("Vertical");
-        direction.Normalize();
-        direction.x = Mathf.Round(direction.x * 10f) / 10f;
-        direction.y = Mathf.Round(direction.y * 10f) / 10f;
-        if ((direction.x == 0) && (direction.y == 0))
-        {
-            a.SetBool("Moving", false);
-            return;
-        } else
-        {
-            a.SetBool("Moving", true);
-            a.SetFloat("Horizontal", direction.x);
-            a.SetFloat("Vertical", direction.y);
-        }
 
-        if(Input.GetKey(KeyCode.LeftShift) == true)
-        {
-            a.SetBool("Walk", true);
-            speed = walkSpeed;
-        } else
-        {
-            a.SetBool("Walk", false);
-            speed = runSpeed;
-        }
+        //MOVEMENT CONTROLS
+        updateMovement();
 
-        if (Input.GetKey(KeyCode.T) == true)
+        //ITEM CONTROLS
+        //use item
+        if (Input.GetKeyDown(KeyCode.Mouse0) == true)
         {
-            speed = 60;
+            InventoryController.Instance.useItem();
         }
-        //rb.MovePosition(rb.position + direction * speed * Time.fixedDeltaTime);
     }
 
     void FixedUpdate()
@@ -82,4 +63,38 @@ public class playerController : MonoBehaviour
         rb.MovePosition(rb.position + (direction * speed * Time.fixedDeltaTime));
     }
 
+    void updateMovement()
+    {
+        //Get movement direction
+        direction.x = Input.GetAxisRaw("Horizontal");
+        direction.y = Input.GetAxisRaw("Vertical");
+        direction.Normalize();
+        direction.x = Mathf.Round(direction.x * 10f) / 10f;
+        direction.y = Mathf.Round(direction.y * 10f) / 10f;
+
+        //Check if moving
+        if ((direction.x == 0) && (direction.y == 0))
+        {
+            a.SetBool("Moving", false);
+            return;
+        }
+        else
+        {
+            a.SetBool("Moving", true);
+            a.SetFloat("Horizontal", direction.x);
+            a.SetFloat("Vertical", direction.y);
+        }
+
+        //Check if walking or running
+        if (Input.GetKey(KeyCode.LeftShift) == true)
+        {
+            a.SetBool("Walk", true);
+            speed = walkSpeed;
+        }
+        else
+        {
+            a.SetBool("Walk", false);
+            speed = runSpeed;
+        }
+    }
 }

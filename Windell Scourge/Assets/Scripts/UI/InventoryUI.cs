@@ -14,7 +14,6 @@ public class InventoryUI : MonoBehaviour
     public event Action OnPointerClickOutside;
     //public event EventHandler OnPointerExitItemEvent2;
 
-    [SerializeField]
     InventoryObject inventory;
     [SerializeField]
     Transform InvSlotsObject;
@@ -24,6 +23,7 @@ public class InventoryUI : MonoBehaviour
 
     private void Start()
     {
+        inventory = InventoryController.Instance.Inventory;
         itemSlots = InvSlotsObject.GetComponentsInChildren<SlotUI>();
         rt = gameObject.GetComponent<RectTransform>();
         //itemSlots[0].OnPointerExitEvent2 += OnPointerExitItemEvent2;
@@ -37,6 +37,8 @@ public class InventoryUI : MonoBehaviour
             //TODO
             itemSlots[i].OnPointerExitEvent += OnPointerExitItemEvent;
         }
+        RefreshInventoryUI();
+
     }
 
     private void Update()
@@ -46,16 +48,19 @@ public class InventoryUI : MonoBehaviour
 
     private void OnEnable()
     {
-        RefreshInventoryUI();
+       RefreshInventoryUI();
     }
 
     public void RefreshInventoryUI()
     {
+        if (inventory == null)
+            return;
+
         for (int i = 0; i < inventory.totalSlots; i++)
         {
             if (inventory.getItem(i) != null)
             { 
-                itemSlots[i].item = inventory.getItem(i).itemData;
+                itemSlots[i].item = inventory.getItem(i);
                 itemSlots[i].Image.rectTransform.localScale = new Vector3(1,1,1);
             } else
             {

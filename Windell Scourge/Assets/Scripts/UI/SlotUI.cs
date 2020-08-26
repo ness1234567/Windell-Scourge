@@ -15,7 +15,7 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     private int _SlotID;
     [SerializeField]
-    private ItemData _item;
+    private Item _item;
     [SerializeField]
     private Image _img;
 
@@ -36,7 +36,7 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         set { _SlotID = value;}
     }
 
-    public ItemData item
+    public Item item
     {
         get { return _item; }
         set
