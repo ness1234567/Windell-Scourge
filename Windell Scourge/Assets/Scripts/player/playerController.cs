@@ -1,6 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+
+public enum transitionStates
+{
+    Locomotion = 0,
+    UseItem = 1,
+    Cutscene = 2,
+}
 
 public class playerController : MonoBehaviour
 {
@@ -9,8 +17,13 @@ public class playerController : MonoBehaviour
     private Rigidbody2D rb;
     [SerializeField]
     private Animator a;
-    private bool interruptMovement = false;
 
+
+    //currentDir = 0;
+    //Item = 0;
+    //usingItem = false;
+    //interruptMovement = false;
+    private bool invincible;
     [SerializeField]
     private float runSpeed = 7f;
     [SerializeField]
@@ -39,28 +52,74 @@ public class playerController : MonoBehaviour
 
     }
 
+    void FixedUpdate()
+    {
+        if (a.GetBool("UnInterruptable") == false)
+        {
+            rb.MovePosition(rb.position + (direction * speed * Time.fixedDeltaTime));
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if(Time.timeScale == 0f)
+        int test = a.GetInteger("CurrentDir");
+        Debug.Log("currentDir = " + test);
+
+        //check if time is running
+        if (Time.timeScale == 0f)
+            return;
+
+        //check if currently in unskippable animation, if so, ignore all player inputs
+        if (a.GetBool("UnInterruptable") == true)
         {
+            speed = 0;
             return;
         }
+
+        //Get Player Input
+
+        //Update Player Animation
 
         //MOVEMENT CONTROLS
         updateMovement();
 
         //ITEM CONTROLS
         //use item
-        if (Input.GetKeyDown(KeyCode.Mouse0) == true)
+        if ((Input.GetKeyDown(KeyCode.Mouse0) == true) && (!EventSystem.current.IsPointerOverGameObject()))
         {
-            InventoryController.Instance.useItem();
+            //charge or use item 
+            if (InventoryController.Instance.getCurrentItem() != null)
+            {
+                if (InventoryController.Instance.getCurrentItem().chargable)
+                {
+                    a.SetBool("ChargingItem", true);
+                    a.SetInteger("Item", (int)InventoryController.Instance.getCurrentItem().ItemType);
+                    InventoryController.Instance.chargeItem();
+                }
+                else
+                {
+                    InventoryController.Instance.useItem();
+                }
+                a.Play("UseItem.Empty");
+            }
         }
-    }
+        if (Input.GetKey(KeyCode.Mouse0) == false)
+        {
+            //if chargable item, use it on mouse release
+            if (InventoryController.Instance.getCurrentItem() != null)
+            {
+                if (InventoryController.Instance.getCurrentItem().chargable && a.GetBool("ChargingItem") == true)
+                {
+                    int dir = a.GetInteger("CurrentDir");
+                    Debug.Log("AT USE ITEM CALL: currentDir = " + dir);
+                    a.SetBool("ChargingItem", false);
 
-    void FixedUpdate()
-    {
-        rb.MovePosition(rb.position + (direction * speed * Time.fixedDeltaTime));
+                    //Use Item when at correct Animation frame 
+                    InventoryController.Instance.useItem();
+                }
+            }
+        }
     }
 
     void updateMovement()
@@ -86,7 +145,7 @@ public class playerController : MonoBehaviour
         }
 
         //Check if walking or running
-        if (Input.GetKey(KeyCode.LeftShift) == true)
+        if ((Input.GetKey(KeyCode.LeftShift) == true) || (a.GetBool("ChargingItem") == true))
         {
             a.SetBool("Walk", true);
             speed = walkSpeed;
@@ -96,5 +155,13 @@ public class playerController : MonoBehaviour
             a.SetBool("Walk", false);
             speed = runSpeed;
         }
+    }
+
+    //////// GETTER AND SETTERS ////////////
+
+    public Animator Animator
+    {
+        get { return a; }
+        set { a = value; }
     }
 }

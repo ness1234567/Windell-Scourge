@@ -260,6 +260,34 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    public void chargeItem()
+    {
+        ItemStack currentItemStack = InvObject.getSelectedItem();
+
+        //check if selected hotbar has an item
+        if (currentItemStack == null)
+            return;
+
+        //check if not dragging item. If dragging item, it should drop item instead
+        if (draggedItemUI.itemStack != null)
+            return;
+
+        //check if clicking on UI
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
+        //charge item
+        currentItemStack.Item.charge();
+    }
+    
+    public Item getCurrentItem()
+    {
+        if (InvObject.getSelectedItem() != null)
+            return InvObject.getSelectedItem().Item;
+        else
+            return null;
+    }
+
     public int AutoStackItem(Item pickedItem, int num)
     {
         //TODO

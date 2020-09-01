@@ -19,7 +19,6 @@ public class Pickable : MonoBehaviour
             return;
         }
 
-        Debug.Log("OnCollisionEnter2D");
         InventoryController invControl = InventoryController.Instance;
 
         DroppedItem i = this.GetComponent<DroppedItem>();

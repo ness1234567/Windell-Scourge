@@ -19,4 +19,5 @@ MonoBehaviour:
   _stackable: 0
   _maxStacks: 1
   _consumable: 0
+  _chargable: 1
   _ToolTier: 0

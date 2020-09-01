@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-/*public enum itemType
+public enum itemType
 {
     Hoe = 0,
     Pickaxe = 1,
     watering_can = 2,
     food = 3
-}*/
+}
 
 [CreateAssetMenu(fileName = "Item", menuName = "Item/Generic")]
 public class Item : ScriptableObject, IComparable<Item>
@@ -29,6 +29,11 @@ public class Item : ScriptableObject, IComparable<Item>
     private int _maxStacks;
     [SerializeField]
     private bool _consumable;
+    [SerializeField]
+    private bool _chargable;
+    [SerializeField]
+    private itemType _itemType;
+
 
     //getters and setters
     /*public itemType type
@@ -88,6 +93,19 @@ public class Item : ScriptableObject, IComparable<Item>
         set { _consumable = value; }
     }
 
+    public bool chargable
+    {
+        get { return _chargable; }
+        set { _chargable = value; }
+    }
+
+    public itemType ItemType
+    {
+        get { return _itemType; }
+        set { _itemType = value; }
+    }
+
     public virtual void use() { }
+    public virtual void charge() { }
 
 }
