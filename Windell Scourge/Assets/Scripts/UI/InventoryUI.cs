@@ -5,20 +5,19 @@ using UnityEngine.EventSystems;
 using System;
 
 //Displays the inventory to the player and handles input (via SlotUI)
-public class InventoryUI : MonoBehaviour
+public class InventoryUI : MonoBehaviour, IUserInterface
 {
-    //list of observers to notify on right-click/enter/exit any item in inventory
-    public event Action<SlotUI> OnLeftClickItemEvent;
-    public event Action<SlotUI> OnPointerEnterItemEvent;
-    public event Action<SlotUI> OnPointerExitItemEvent;
+    //list of observers to notify on right-click any item in inventory
+    public event Action<SlotUI, IContainer, IUserInterface> OnLeftClickItemEvent;
     public event Action OnPointerClickOutside;
-    //public event EventHandler OnPointerExitItemEvent2;
 
     InventoryObject inventory;
     [SerializeField]
     Transform InvSlotsObject;
     [SerializeField]
     SlotUI[] itemSlots;
+    [SerializeField]
+    ItemHighlighUI highlight;
     RectTransform rt;
 
     private void Start()
@@ -26,18 +25,16 @@ public class InventoryUI : MonoBehaviour
         inventory = InventoryController.Instance.Inventory;
         itemSlots = InvSlotsObject.GetComponentsInChildren<SlotUI>();
         rt = gameObject.GetComponent<RectTransform>();
-        //itemSlots[0].OnPointerExitEvent2 += OnPointerExitItemEvent2;
 
         //Each slot is an observable. Subscribe to each observerable to check for a right click event on a slot
         for (int i = 0; i < inventory.totalSlots; i++)
         {
             itemSlots[i].SlotID = i;
-            itemSlots[i].OnLeftClickEvent += OnLeftClickItemEvent;
-            itemSlots[i].OnPointerEnterEvent += OnPointerEnterItemEvent;
-            //TODO
-            itemSlots[i].OnPointerExitEvent += OnPointerExitItemEvent;
+            itemSlots[i].OnLeftClickEvent += OnLeftClickItemEventWrapper;
+            itemSlots[i].OnPointerEnterEvent += main_CursorEnterItem;
+            itemSlots[i].OnPointerExitEvent += main_CursorExitItem;
         }
-        RefreshInventoryUI();
+        Refresh();
 
     }
 
@@ -48,10 +45,15 @@ public class InventoryUI : MonoBehaviour
 
     private void OnEnable()
     {
-       RefreshInventoryUI();
+       Refresh();
     }
 
-    public void RefreshInventoryUI()
+    private void OnDisable()
+    {
+        Refresh();
+    }
+
+    public void Refresh()
     {
         if (inventory == null)
             return;
@@ -67,7 +69,6 @@ public class InventoryUI : MonoBehaviour
                 itemSlots[i].item = null;
             }
         }
-        ItemHighlighUI highlight = GetComponentInChildren<ItemHighlighUI>();
         highlight.deactivateHighlight();
 
     }
@@ -83,4 +84,40 @@ public class InventoryUI : MonoBehaviour
             OnPointerClickOutside();
         }
     }
+
+    private void main_CursorEnterItem(SlotUI i)
+    {
+        i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
+
+        Vector3 pos = i.transform.localPosition;
+
+        float biasx = 0;
+        float biasy = 0;
+        if ((i.SlotID >= 0) && (i.SlotID <= 29))
+        {
+            biasx = -109.5f;
+            biasy = 80;
+        }
+        else if ((i.SlotID >= 30) && (i.SlotID <= 39))
+        {
+            biasx = -109.5f;
+            biasy = 62;
+        }
+
+        highlight.activateHighlight(pos.x + biasx, pos.y + biasy, 1, 1);
+
+    }
+
+    private void main_CursorExitItem(SlotUI i)
+    {
+        i.Image.rectTransform.localScale = new Vector3(1, 1, 1);
+        //highlight = InvUI.GetComponentInChildren<ItemHighlighUI>();
+        highlight.deactivateHighlight();
+    }
+
+    private void OnLeftClickItemEventWrapper(SlotUI i)
+    {
+        OnLeftClickItemEvent(i, inventory, this);
+    }
+
 }

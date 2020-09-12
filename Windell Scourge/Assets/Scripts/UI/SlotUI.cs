@@ -88,7 +88,6 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         if ((eventData != null) && (OnPointerExitEvent != null))
         {
             OnPointerExitEvent(this);
-            //OnPointerExitEvent2(this, EventArgs.Empty);
         }
     }
 

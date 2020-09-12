@@ -48,7 +48,7 @@ public class SetDirection : StateMachineBehaviour
             direction = 1;
         else if (y > 0)
             direction = 2;
-        else if (y > 0)
+        else if (y < 0)
             direction = 0;
 
         animator.SetInteger("CurrentDir", direction);

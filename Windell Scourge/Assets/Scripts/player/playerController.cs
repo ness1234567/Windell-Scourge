@@ -63,8 +63,8 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        int test = a.GetInteger("CurrentDir");
-        Debug.Log("currentDir = " + test);
+        //int test = a.GetInteger("CurrentDir");
+        //Debug.Log("currentDir = " + test);
 
         //check if time is running
         if (Time.timeScale == 0f)
@@ -79,47 +79,11 @@ public class playerController : MonoBehaviour
 
         //Get Player Input
 
-        //Update Player Animation
-
         //MOVEMENT CONTROLS
         updateMovement();
 
         //ITEM CONTROLS
-        //use item
-        if ((Input.GetKeyDown(KeyCode.Mouse0) == true) && (!EventSystem.current.IsPointerOverGameObject()))
-        {
-            //charge or use item 
-            if (InventoryController.Instance.getCurrentItem() != null)
-            {
-                if (InventoryController.Instance.getCurrentItem().chargable)
-                {
-                    a.SetBool("ChargingItem", true);
-                    a.SetInteger("Item", (int)InventoryController.Instance.getCurrentItem().ItemType);
-                    InventoryController.Instance.chargeItem();
-                }
-                else
-                {
-                    InventoryController.Instance.useItem();
-                }
-                a.Play("UseItem.Empty");
-            }
-        }
-        if (Input.GetKey(KeyCode.Mouse0) == false)
-        {
-            //if chargable item, use it on mouse release
-            if (InventoryController.Instance.getCurrentItem() != null)
-            {
-                if (InventoryController.Instance.getCurrentItem().chargable && a.GetBool("ChargingItem") == true)
-                {
-                    int dir = a.GetInteger("CurrentDir");
-                    Debug.Log("AT USE ITEM CALL: currentDir = " + dir);
-                    a.SetBool("ChargingItem", false);
-
-                    //Use Item when at correct Animation frame 
-                    InventoryController.Instance.useItem();
-                }
-            }
-        }
+        checkItemUseOrCharge();
     }
 
     void updateMovement()
@@ -155,6 +119,47 @@ public class playerController : MonoBehaviour
             a.SetBool("Walk", false);
             speed = runSpeed;
         }
+    }
+
+    void checkItemUseOrCharge()
+    {
+        if ((Input.GetKeyDown(KeyCode.Mouse0) == true) && (!EventSystem.current.IsPointerOverGameObject()))
+        {
+            //charge or use item 
+            if (InventoryController.Instance.getCurrentItem() != null)
+            {
+                if (InventoryController.Instance.getCurrentItem().chargable)
+                {
+                    a.SetBool("ChargingItem", true);
+                    a.SetInteger("Item", (int)InventoryController.Instance.getCurrentItem().ItemType);
+                    InventoryController.Instance.chargeItem();
+                }
+                else
+                {
+                    InventoryController.Instance.useItem();
+                }
+                a.Play("UseItem.Empty");
+            }
+        }
+        if (Input.GetKey(KeyCode.Mouse0) == false)
+        {
+            //if chargable item, use it on mouse release
+            if (InventoryController.Instance.getCurrentItem() != null)
+            {
+                if (InventoryController.Instance.getCurrentItem().chargable && a.GetBool("ChargingItem") == true)
+                {
+                    int dir = a.GetInteger("CurrentDir");
+                    Debug.Log("AT USE ITEM CALL: currentDir = " + dir);
+                    a.SetBool("ChargingItem", false);
+                }
+            }
+        }
+    }
+
+
+    void useItem()
+    {
+        InventoryController.Instance.useItem();
     }
 
     //////// GETTER AND SETTERS ////////////

@@ -82,7 +82,7 @@ public class CameraResolution : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RescaleCamera();
+        //RescaleCamera();
     }
     #endregion
 }

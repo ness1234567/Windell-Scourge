@@ -49,7 +49,7 @@ public class TileMapManager : MonoBehaviour
     public void ploughTiles(int x1, int x2, int y1, int y2)
     {
         int playerDir = playerController.Instance.Animator.GetInteger("CurrentDir");
-        Debug.Log("IN TILE FUNC: currentDir = " + playerDir);
+        //Debug.Log("IN TILE FUNC: currentDir = " + playerDir);
         //Loop through all affected tile twice. 1st to determine which tiles are ploughed within 2 tiles around the hit area. 2nd to detemine which ploughed sprite to use.
         int cols = y2 - y1 + 5;
         int rows = x2 - x1 + 5;
@@ -82,11 +82,11 @@ public class TileMapManager : MonoBehaviour
                     else
                         area[i, j] = 0;
                 }
-                if (area[i, j] == 1)
+                /*if (area[i, j] == 1)
                 {
                     Debug.Log("area[" + i + "," + j + "] =" + area[i, j]);
                     Debug.Log("at position: " + tx + ", " + ty);
-                }     
+                }   */  
                 //Determine if object is on tile. If so, set to area[i,j] = 0
                 //TODO
 
@@ -108,11 +108,11 @@ public class TileMapManager : MonoBehaviour
                 numPloughedTiles = numPloughedTiles + area[i, j];
             }
         }
-        Debug.Log("num plough = " + numPloughedTiles);
+        //Debug.Log("num plough = " + numPloughedTiles);
 
         Vector3Int[] positions = new Vector3Int[numPloughedTiles];
         TileBase[] tileArray = new TileBase[positions.Length];
-        Debug.Log("second RUN");
+        //Debug.Log("second RUN");
         int Index = 0;
         for (i = 1; i <= cols-2; i++)
         {
@@ -133,8 +133,8 @@ public class TileMapManager : MonoBehaviour
 
                     TileBase tile = determinePloughTile(up, down, left, right);
                     tileArray[Index] = tile;
-                    Debug.Log("area[" + i + "," + j + "] =" + area[i, j]);
-                    Debug.Log("Setting tile at " + tx + ", " + ty + " to " + tile.name);
+                    //Debug.Log("area[" + i + "," + j + "] =" + area[i, j]);
+                    //Debug.Log("Setting tile at " + tx + ", " + ty + " to " + tile.name);
                     Index = Index + 1;
                 }
             }

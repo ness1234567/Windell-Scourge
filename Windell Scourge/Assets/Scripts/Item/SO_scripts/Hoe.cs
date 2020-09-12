@@ -19,12 +19,12 @@ public class Hoe : Item
     public override void use() {
 
         playerController player = playerController.Instance;
-
+        Debug.Log("using hoe");
         //int numframes = _ToolTier;
         int numframes = 3;          //<--- Temporary for testing
         float time = player.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
         int currframe = (int)(time*numframes + 1);
-        Debug.Log("Using Hoe at Level " + currframe + " !");
+        //Debug.Log("Using Hoe at Level " + currframe + " !");
 
         //Determine tiles to plough
         int x1, x2, y1, y2;
@@ -91,7 +91,7 @@ public class Hoe : Item
         {
 
         }*/
-        Debug.Log("playerPos = " + playerPosCell.x + ", " + playerPosCell.y);
+        //Debug.Log("playerPos = " + playerPosCell.x + ", " + playerPosCell.y);
         TileMapManager.Instance.ploughTiles(x1, x2, y1, y2);
 
     }

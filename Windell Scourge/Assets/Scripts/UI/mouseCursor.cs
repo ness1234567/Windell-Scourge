@@ -38,6 +38,7 @@ public class mouseCursor : MonoBehaviour
         //temporary
         if (Screen.width < 1400)
         {
+
             Cursor.SetCursor(pressedCursor, Vector2.zero, CursorMode.ForceSoftware);
         }
         else

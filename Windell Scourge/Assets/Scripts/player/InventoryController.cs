@@ -9,19 +9,22 @@ public class InventoryController : MonoBehaviour
 {
     private static InventoryController _instance;
     [SerializeField]
-    private InventoryUI InvUI;
-    [SerializeField]
-    private ItemHighlighUI highlight;
-    [SerializeField]
     private InventoryObject InvObject;
     [SerializeField]
     private DraggedItemUI draggedItemUI;
     [SerializeField]
-    private HUDToolbarUI ToolbarUI;
-    [SerializeField]
     private SelectionOutlineUI selectionOutline;
     [SerializeField]
     public GameObject DroppedItemPrefab;
+
+    /////////////////////////// UI INTERACTABLE ITEM CONTAINERS //////////////////////////////////
+
+    [SerializeField]
+    private InventoryUI InvUI;
+    [SerializeField]
+    private HUDToolbarUI ToolbarUI;
+    [SerializeField]
+    private ChestUI chestUI;
 
     private void Awake()
     {
@@ -34,134 +37,114 @@ public class InventoryController : MonoBehaviour
             _instance = this;
         }
 
-        //Subscribe handlers for clicking on item
-        InvUI.OnLeftClickItemEvent += main_ItemClick;
+        //////// INVENTORY MAIN ///////////////////
 
-        //Subscribe handlers for hovering over item
-        InvUI.OnPointerEnterItemEvent += main_CursorEnterItem;
-        InvUI.OnPointerExitItemEvent += main_CursorExitItem;
+        //Subscribe handlers for clicking on item
+        InvUI.OnLeftClickItemEvent += container_ItemClick;
 
         //Subscribe handler for clicking outside Inventory
         InvUI.OnPointerClickOutside += DropItem;
 
-        //Subscribe handlers for hovering over item
-        ToolbarUI.OnPointerEnterItemEvent += toolbar_CursorEnterItem;
-        ToolbarUI.OnPointerExitItemEvent += toolbar_CursorExitItem;
+        //////////// TOOLBAR ///////////////////////
 
         //Subscribe handler for a change in selected item
         ToolbarUI.OnLeftClickItemEvent += toolbar_ItemClick;
+
+        /////////////// CHEST //////////////////////////////
+
+        //Subscribe handlers for clicking on item
+        chestUI.OnLeftClickItemEvent += container_ItemClick;
+
+        //Subscribe handler for clicking outside chest UI
+        chestUI.OnPointerClickOutside += DropItem;
+
     }
 
     public static InventoryController Instance { get { return _instance; } }
     public InventoryObject Inventory { get { return InvObject; } }
 
-    private void main_CursorEnterItem(SlotUI i)
+    ////////////////////////////// MAIN INVENTORY CALLBACKS ////////////////////////////////////
+
+    private void container_ItemClick(SlotUI i, IContainer container, IUserInterface UI)
     {
-        i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
-        highlight = InvUI.GetComponentInChildren<ItemHighlighUI>();
-        //move highlight image to slot position
-        if ((i.SlotID >= 0) && (i.SlotID <= 29))
+        Debug.Log("item click: " + i.SlotID);
+        Debug.Log(container.getItem(i.SlotID));
+        Debug.Log((draggedItemUI.itemStack != null));
+
+        if ((container.getItem(i.SlotID) != null) && (draggedItemUI.itemStack != null))
         {
-            float inv_initX = 9;
-            float inv_initY = 50;
+            Debug.Log("A");
 
-            int row = (int)(i.SlotID / 5);
-            int col = i.SlotID % 5;
-
-            float x = inv_initX + (col * 20);
-            float y = inv_initY - (row * 18);
-
-            highlight.activateHighlight(x, y, 1, 1);
-        }
-        else if ((i.SlotID >= 30) && (i.SlotID <= 39))
-        {
-            float tool_initX = -91;
-            float tool_initY = -69;
-
-            float x = tool_initX + (20 * (i.SlotID - 30));
-
-            highlight.activateHighlight(x, tool_initY, 1, 1);
-        }
-    }
-
-    private void main_CursorExitItem(SlotUI i)
-    {
-        i.Image.rectTransform.localScale = new Vector3(1, 1, 1);
-        highlight = InvUI.GetComponentInChildren<ItemHighlighUI>();
-        highlight.deactivateHighlight();
-    }
-
-    private void main_ItemClick(SlotUI i)
-    {
-        if ((InvObject.getItem(i.SlotID) != null) && (draggedItemUI.itemStack != null))
-        {
             //If same item, stack them
-            if(InvObject.getItem(i.SlotID).item_id == draggedItemUI.Item.item_id)
+            if (container.getItem(i.SlotID).item_id == draggedItemUI.Item.item_id)
             {
-                StackItem(i);
+                StackItem(i, container);
             }
             //If not same item, then swap positions
             else
             {
-                SwapItem(i);
+                SwapItem(i, container);
             }
         }
-        else if ((InvObject.getItem(i.SlotID) != null) && (draggedItemUI.itemStack == null))
+        else if ((container.getItem(i.SlotID) != null) && (draggedItemUI.itemStack == null))
         {
-            SelectItem(i);
+            Debug.Log("B");
+
+            SelectItem(i, container);
         }
-        else if ((InvObject.getItem(i.SlotID) == null) && (draggedItemUI.itemStack != null))
+        else if ((container.getItem(i.SlotID) == null) && (draggedItemUI.itemStack != null))
         {
-            InsertItem(i);
+            Debug.Log("C");
+
+            InsertItem(i, container);
         }
+        UI.Refresh();
     }
 
-    private void SwapItem(SlotUI i)
+    private void SwapItem(SlotUI i, IContainer container)
     {
         ItemStack temp = draggedItemUI.itemStack;
-        draggedItemUI.itemStack = InvObject.getItemStack(i.SlotID);
-        InvObject.addItemStack(i.SlotID, temp);
+        draggedItemUI.itemStack = container.getItemStack(i.SlotID);
+        container.addItemStack(i.SlotID, temp);
         i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
-        InvUI.RefreshInventoryUI();
     }
 
-    private void StackItem(SlotUI i)
+    private void StackItem(SlotUI i, IContainer container)
     {
         int maxStackNum = draggedItemUI.Item.maxStacks;
-        int numA = InvObject.getItemStack(i.SlotID).quantity;
+        int numA = container.getItemStack(i.SlotID).quantity;
         int numB = draggedItemUI.itemStack.quantity;
         int total = numA + numB;
         if (total > maxStackNum)
         {
             int diff = total - maxStackNum;
             draggedItemUI.itemStack.quantity = diff;
-            InvObject.getItemStack(i.SlotID).quantity = maxStackNum;
+            container.getItemStack(i.SlotID).quantity = maxStackNum;
         } else
         {
-            InvObject.getItemStack(i.SlotID).quantity = total;
+            container.getItemStack(i.SlotID).quantity = total;
             //Destroy(draggedItemUI.itemStack);
             draggedItemUI.itemStack = null;
         }
     }
 
-    private void SelectItem(SlotUI i)
+    private void SelectItem(SlotUI i, IContainer container)
     {
-        draggedItemUI.itemStack = InvObject.getItemStack(i.SlotID);
-        InvObject.removeItemStack(i.SlotID);
-        InvUI.RefreshInventoryUI();
+        Debug.Log("item pick: " + i.SlotID);
+        draggedItemUI.itemStack = container.getItemStack(i.SlotID);
+        container.removeItemStack(i.SlotID);
     }
 
-    private void InsertItem(SlotUI i)
+    private void InsertItem(SlotUI i, IContainer container)
     {
-        InvObject.addItemStack(i.SlotID, draggedItemUI.itemStack);
-        InvUI.RefreshInventoryUI();
+        container.addItemStack(i.SlotID, draggedItemUI.itemStack);
         i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
         draggedItemUI.itemStack = null;
     }
 
     private void DropItem()
     {
-        if (draggedItemUI.Item != null)
+        if (draggedItemUI.itemStack != null)
         {
             //Create new droppedItem prefab
             Transform playerTransform = playerController.Instance.transform;
@@ -180,35 +163,6 @@ public class InventoryController : MonoBehaviour
 
     ////////////////////////////// TOOLBAR CALLBACKS ////////////////////////////////////
 
-    private void toolbar_CursorEnterItem(SlotUI i)
-    {
-        i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
-
-        if ((i.SlotID >= 30) && (i.SlotID <= 39))
-        {
-            float tool_initX = -90;
-            float tool_initY = -2;
-
-            float x = tool_initX + (20 * (i.SlotID - 30));
-            highlight = ToolbarUI.GetComponentInChildren<ItemHighlighUI>();
-            highlight.activateHighlight(x, tool_initY, 1, 1);
-        }
-    }
-
-    private void toolbar_CursorExitItem(SlotUI i)
-    {
-        if (i.SlotID == InvObject.selectedItemID)
-        {
-            i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
-        }
-        else
-        {
-            i.Image.rectTransform.localScale = new Vector3(1, 1, 1);
-        }
-        highlight = ToolbarUI.GetComponentInChildren<ItemHighlighUI>();
-        highlight.deactivateHighlight();
-    }
-
     private void toolbar_ItemClick(SlotUI i)
     {
         i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
@@ -222,6 +176,9 @@ public class InventoryController : MonoBehaviour
         //refresh toolbar
         ToolbarUI.RefreshToolbarUI();
     }
+
+    ////////////////////////////// CHEST STORAGE CALLBACKS ////////////////////////////////////
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     public void useItem()
@@ -286,6 +243,14 @@ public class InventoryController : MonoBehaviour
             return InvObject.getSelectedItem().Item;
         else
             return null;
+    }
+
+    public int getCurrentItemID()
+    {
+        if (InvObject.getSelectedItem() != null)
+            return InvObject.selectedItemID;
+        else
+            return -1;
     }
 
     public int AutoStackItem(Item pickedItem, int num)
@@ -378,7 +343,7 @@ public class InventoryController : MonoBehaviour
                 }
             }
         }
-        InvUI.RefreshInventoryUI();
+        InvUI.Refresh();
         ToolbarUI.RefreshToolbarUI();
         return numLeft;
     }

@@ -6,18 +6,19 @@ public class click_observer : MonoBehaviour
 {
 
     private Camera mainCamera;
-    public GameObject player;
+    public Transform player;
 
     // Start is called before the first frame update
     void Start()
     {
         mainCamera = Camera.main;
+        player = playerController.Instance.transform;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonDown(1))
         {
             Ray mouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D[] hit = Physics2D.RaycastAll(mouseRay.origin, mouseRay.direction, 100f);
@@ -31,6 +32,7 @@ public class click_observer : MonoBehaviour
                     GameObject obj = i.transform.gameObject;
                     if (isInteractable(obj))
                     {
+                        obj.GetComponent<IClickBehaviour>().onClick(obj);
 
                     }
                 }
@@ -39,19 +41,26 @@ public class click_observer : MonoBehaviour
     }
 
     //TODO: check if in 1 tile range
-    bool inRangeOfPlayer(GameObject player)
+    bool inRangeOfPlayer(GameObject obj)
     {
-        //find out which tile player is in
+        //find out point on Obj closest to player
+        Vector3 pointOnObj = obj.GetComponent<Collider2D>().bounds.ClosestPoint(player.position);
 
-        //find out which tile this object is in
+        //calculate distance to player
+        float xdist = Mathf.Abs(pointOnObj.x - player.position.x);
+        float ydist = Mathf.Abs(pointOnObj.y - player.position.y);
 
-        //calculate min distance in tile
-        return true;
+        float reachDist = 1.5f;
+
+        if ((xdist < reachDist) && (ydist < reachDist))
+            return true;
+        else
+            return false;
     }
 
     bool isInteractable(GameObject o)
     {
-        if((o.GetComponent<ClickBehaviour>() != null) && (inRangeOfPlayer(player)))
+        if((o.GetComponent<IClickBehaviour>() != null) && (inRangeOfPlayer(o)))
         {
             return true;
         }

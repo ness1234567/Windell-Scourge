@@ -3,20 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CreateAssetMenu(fileName = "ItemDatabase", menuName = "ItemDatabase")]
-public class ItemDatabase : ScriptableObject
+public class BuildDatabase : MonoBehaviour
 {
-    [SerializeField]
-    private List<Item> _ItemList = new List<Item>();
-
-    public List<Item> ItemList
-    {
-        get { return _ItemList; }
-        set { _ItemList = value; }
-    }
-
     [MenuItem("ItemDatabase/BuildData")]
-    static void BuildDatabase()
+    static void BuildDatabaseSO()
     {
         Debug.Log("building Database");
         ItemDatabase database = Resources.Load<ItemDatabase>("ItemDatabase");

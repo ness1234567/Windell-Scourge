@@ -8,8 +8,8 @@ using System;
 public class HUDToolbarUI : MonoBehaviour
 {
     public event Action<SlotUI> OnLeftClickItemEvent;
-    public event Action<SlotUI> OnPointerEnterItemEvent;
-    public event Action<SlotUI> OnPointerExitItemEvent;
+    //public event Action<SlotUI> OnPointerEnterItemEvent;
+    //public event Action<SlotUI> OnPointerExitItemEvent;
 
     int currentSlotID = 0;
 
@@ -18,6 +18,8 @@ public class HUDToolbarUI : MonoBehaviour
     Transform InvSlotsObject;
     [SerializeField]
     SlotUI[] itemSlots;
+    [SerializeField]
+    ItemHighlighUI highlight;
 
     private void Start()
     {
@@ -29,8 +31,8 @@ public class HUDToolbarUI : MonoBehaviour
         {
             itemSlots[i].SlotID = i+30;
             itemSlots[i].OnLeftClickEvent += OnLeftClickItemEvent;
-            itemSlots[i].OnPointerEnterEvent += OnPointerEnterItemEvent;
-            itemSlots[i].OnPointerExitEvent += OnPointerExitItemEvent;
+            itemSlots[i].OnPointerEnterEvent += toolbar_CursorEnterItem;
+            itemSlots[i].OnPointerExitEvent += toolbar_CursorExitItem;
         }
         RefreshToolbarUI();
     }
@@ -79,7 +81,7 @@ public class HUDToolbarUI : MonoBehaviour
                 itemSlots[i].item = null;
             }
         }
-        ItemHighlighUI highlight = GetComponentInChildren<ItemHighlighUI>();
+        //ItemHighlighUI highlight = GetComponentInChildren<ItemHighlighUI>();
         highlight.deactivateHighlight();
 
     }
@@ -129,5 +131,29 @@ public class HUDToolbarUI : MonoBehaviour
                 currentSlotID = currentSlotID + 10;
             }
         }
+    }
+
+    private void toolbar_CursorEnterItem(SlotUI i)
+    {
+        i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
+
+        Vector3 pos = i.transform.localPosition;
+
+        highlight.activateHighlight(pos.x, pos.y, 1, 1);
+
+    }
+
+    private void toolbar_CursorExitItem(SlotUI i)
+    {
+        if (i.SlotID == InventoryController.Instance.getCurrentItemID())
+        {
+            i.Image.rectTransform.localScale = new Vector3(1.25f, 1.25f, 1);
+        }
+        else
+        {
+            i.Image.rectTransform.localScale = new Vector3(1, 1, 1);
+        }
+        //highlight = ToolbarUI.GetComponentInChildren<ItemHighlighUI>();
+        highlight.deactivateHighlight();
     }
 }

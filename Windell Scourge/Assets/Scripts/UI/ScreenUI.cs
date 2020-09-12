@@ -2,14 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum UIScreen
+{
+    HUD = 0,
+    Inventory = 1,
+    Settings = 2,
+    Chest = 3,
+}
+
 public class ScreenUI : MonoBehaviour
 {
-    public static bool SettingsScreenOpen = false;
-    private bool InventoryScrenOpen = false;
+    private static ScreenUI _instance;
+    private UIScreen currentUIScreen = UIScreen.HUD;
 
     public GameObject HUDScreen;
     public GameObject InventoryScreen;
-    public GameObject pauseScreen;
+    public GameObject settingScreen;
+    public GameObject ChestScreen;
+
+    public static ScreenUI Instance { get { return _instance; } }
+
+    void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -29,15 +52,15 @@ public class ScreenUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.I))
         {
-            if (InventoryScrenOpen)
+            if (currentUIScreen == UIScreen.Inventory)
             {
                 CloseInventory();
-                InventoryScrenOpen = false;
+                currentUIScreen = UIScreen.HUD;
             }
-            else
+            else 
             {
                 OpenInventory();
-                InventoryScrenOpen = true;
+                currentUIScreen = UIScreen.Inventory;
             }
         }
     }
@@ -47,45 +70,74 @@ public class ScreenUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (SettingsScreenOpen)
+            if (currentUIScreen == UIScreen.Settings)
             {
-                Resume();
+                CloseSettings();
             }
-            else
+            else if (currentUIScreen == UIScreen.HUD)
             {
-                Pause();
+                OpenSettings();
+            } else
+            {
+                closeAllUIScreens();
+                HUDScreen.SetActive(true);
             }
         }
     }
 
     public void CloseInventory()
     {
-        InventoryScreen.SetActive(false);
+        closeAllUIScreens();
         HUDScreen.SetActive(true);
     }
 
     public void OpenInventory()
     {
+        closeAllUIScreens();
         InventoryScreen.SetActive(true);
-        HUDScreen.SetActive(false);
     }
 
-    public void Resume()
+    public void CloseSettings()
     {
-        pauseScreen.SetActive(false);
+        closeAllUIScreens();
         HUDScreen.SetActive(true);
-        Time.timeScale = 1f;
-        SettingsScreenOpen = false;
+        //Time.timeScale = 1f;
+        currentUIScreen = UIScreen.HUD;
     }
 
-    public void Pause()
+    public void OpenSettings()
     {
-        pauseScreen.SetActive(true);
-        HUDScreen.SetActive(false);
-        InventoryScreen.SetActive(false);
+        closeAllUIScreens();
+        settingScreen.SetActive(true);
         //Time.timeScale = 0f;
-        InventoryScrenOpen = false;
-        SettingsScreenOpen = true;
+        currentUIScreen = UIScreen.Settings;
+    }
+
+    public void CloseChest()
+    {
+        closeAllUIScreens();
+        HUDScreen.SetActive(true);
+        currentUIScreen = UIScreen.HUD;
+    }
+
+    public void OpenChest(GameObject obj)
+    {
+        closeAllUIScreens();
+        ChestScreen.GetComponent<ChestUI>().setChest(obj.GetComponentInParent<ChestStorage>());
+
+        ChestScreen.SetActive(true);
+
+        //Time.timeScale = 0f;
+        currentUIScreen = UIScreen.Chest;
+    }
+
+
+    public void closeAllUIScreens()
+    {
+        InventoryScreen.SetActive(false);
+        ChestScreen.SetActive(false);
+        settingScreen.SetActive(false);
+        HUDScreen.SetActive(false);
     }
 
     public void Quit()
