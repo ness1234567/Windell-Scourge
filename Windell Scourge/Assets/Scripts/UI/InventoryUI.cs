@@ -34,7 +34,7 @@ public class InventoryUI : MonoBehaviour, IUserInterface
             itemSlots[i].OnPointerEnterEvent += main_CursorEnterItem;
             itemSlots[i].OnPointerExitEvent += main_CursorExitItem;
         }
-        Refresh();
+        OpenRefresh();
 
     }
 
@@ -45,12 +45,32 @@ public class InventoryUI : MonoBehaviour, IUserInterface
 
     private void OnEnable()
     {
-       Refresh();
+        OpenRefresh();
     }
 
     private void OnDisable()
     {
-        Refresh();
+        OpenRefresh();
+    }
+
+    public void OpenRefresh()
+    {
+        if (inventory == null)
+            return;
+
+        for (int i = 0; i < inventory.totalSlots; i++)
+        {
+            if (inventory.getItem(i) != null)
+            {
+                itemSlots[i].item = inventory.getItem(i);
+                itemSlots[i].Image.rectTransform.localScale = new Vector3(1, 1, 1);
+            }
+            else
+            {
+                itemSlots[i].item = null;
+            }
+        }
+        highlight.deactivateHighlight();
     }
 
     public void Refresh()
@@ -63,14 +83,11 @@ public class InventoryUI : MonoBehaviour, IUserInterface
             if (inventory.getItem(i) != null)
             { 
                 itemSlots[i].item = inventory.getItem(i);
-                itemSlots[i].Image.rectTransform.localScale = new Vector3(1,1,1);
             } else
             {
                 itemSlots[i].item = null;
             }
         }
-        highlight.deactivateHighlight();
-
     }
 
     private void detectClickOutside()
